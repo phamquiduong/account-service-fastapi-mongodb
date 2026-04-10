@@ -1,7 +1,20 @@
-fastapi
-uvicorn
-pymongo
-pydantic[email]
+# Python
 python-dotenv
+
+# FastAPI
+fastapi[standard]
+
+# ASGI web server
+uvicorn
+
+# Validator
+pydantic[email]
+
+# MongoDB
+pymongo
+
+# Password hash
 pwdlib[argon2]
+
+# JWT token
 pyjwt
