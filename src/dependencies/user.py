@@ -8,7 +8,7 @@ from models.user import User
 
 
 async def get_user_manager():
-    yield BaseMongoManager(uri=settings.MONGODB_URI, db_name=settings.DB_NAME, collection_name="users", model=User)
+    yield BaseMongoManager(uri=settings.DB_URI, db_name=settings.DB_NAME, collection_name="users", model=User)
 
 
 UserMongoManagerDep = Annotated[BaseMongoManager[User], Depends(get_user_manager)]
