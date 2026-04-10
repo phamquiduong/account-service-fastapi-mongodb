@@ -18,7 +18,7 @@ if not load_dotenv(DOTENV_DIR):
     logger.warning("Not found env file in %s", DOTENV_DIR)
 
 # MongoDB connection
-MONGODB_URI = os.environ["MONGODB_URI"]
+DB_URI = os.environ["DB_URI"]
 DB_NAME = os.environ["DB_NAME"]
 
 # JWT setup
