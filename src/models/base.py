@@ -11,7 +11,7 @@ SortDirection = Literal[1, -1]
 
 
 class MongoModel(BaseModel):
-    id: str = Field(default_factory=lambda: str(ObjectId()))
+    id: str = Field(default_factory=lambda: str(ObjectId()), examples=["69d8b4df68b4dc9557add552"])
 
     def model_dump_mongodb(self) -> dict[str, Any]:
         data = self.__dict__.copy()

@@ -37,5 +37,17 @@ class TokenData(BaseModel):
 
 
 class TokenResponse(BaseModel):
-    access: str
-    refresh: str
+    access: str = Field(
+        examples=[
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+            "eyJ1c2VyX2lkIjoiNjlkOGI0ZGY2OGI0ZGM5NTU3YWRkNTUyIiwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9."
+            "kZWhX7TzrYKBdpyNOKemFlATZAE-dBW54zrrjQdB6YQ"
+        ]
+    )
+    refresh: str = Field(
+        examples=[
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+            "eyJ1c2VyX2lkIjoiNjlkOGI0ZGY2OGI0ZGM5NTU3YWRkNTUyIiwidG9rZW5fdHlwZSI6InJlZnJlc2gifQ."
+            "jeoVYVioo538apWKyGl0UlE6lOrQugKTNusQlOLt_OU"
+        ]
+    )
