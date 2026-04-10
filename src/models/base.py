@@ -4,31 +4,24 @@ from bson import ObjectId
 from pydantic import BaseModel, Field
 from pymongo import AsyncMongoClient, ReturnDocument
 from pymongo.asynchronous.collection import AsyncCollection
+from pymongo.results import DeleteResult, InsertManyResult, InsertOneResult, UpdateResult
 
 T = TypeVar("T", bound="MongoModel")
 SortDirection = Literal[1, -1]
 
 
-class PyObjectId(ObjectId):
-    @classmethod
-    def __get_pydantic_core_schema__(cls, source, handler):
-        from pydantic_core import core_schema
-
-        return core_schema.str_schema()
-
-    @classmethod
-    def __get_pydantic_json_schema__(cls, core_schema, handler):
-        return {"type": "string"}
-
-
 class MongoModel(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: str = Field(default_factory=lambda: str(ObjectId()))
 
-    model_config = {
-        "populate_by_name": True,
-        "arbitrary_types_allowed": True,
-        "json_encoders": {ObjectId: str},
-    }
+    def model_dump_mongodb(self) -> dict[str, Any]:
+        data = self.__dict__.copy()
+        data["_id"] = ObjectId(data.pop("id"))
+        return data
+
+    @classmethod
+    def model_validate_mongodb(cls, data: dict[str, Any]):
+        data["id"] = str(data.pop("_id"))
+        return cls.model_validate(data)
 
 
 class BaseMongoManager(Generic[T]):
@@ -38,19 +31,17 @@ class BaseMongoManager(Generic[T]):
         self.collection: AsyncCollection = self.db[collection_name]
         self.model = model
 
-    async def create(self, obj: T) -> T:
-        data = obj.model_dump(by_alias=True)
-        await self.collection.insert_one(data)
-        return obj
+    async def create(self, obj: T) -> InsertOneResult:
+        data = obj.model_dump_mongodb()
+        return await self.collection.insert_one(data)
 
-    async def insert_many(self, objs: list[T]) -> list[T]:
-        data = [obj.model_dump(by_alias=True) for obj in objs]
-        await self.collection.insert_many(data)
-        return objs
+    async def insert_many(self, objs: list[T]) -> InsertManyResult:
+        data = [obj.model_dump_mongodb() for obj in objs]
+        return await self.collection.insert_many(data)
 
     async def get(self, query: dict[str, Any]) -> T | None:
         data = await self.collection.find_one(query)
-        return self.model.model_validate(data) if data else None
+        return self.model.model_validate_mongodb(data) if data else None
 
     async def list(
         self,
@@ -59,36 +50,38 @@ class BaseMongoManager(Generic[T]):
         limit: int = 100,
         sort: list[tuple[str, SortDirection]] | None = None,
     ) -> list[T]:
-        cursor = self.collection.find(query)
+        cursor = self.collection.find(query or {})
 
         if sort:
             cursor = cursor.sort(sort)
 
         cursor = cursor.skip(skip).limit(limit)
 
-        return [self.model.model_validate(doc) async for doc in cursor]
+        return [self.model.model_validate_mongodb(doc) async for doc in cursor]
 
     async def count(self, query: dict[str, Any]) -> int:
         return await self.collection.count_documents(query)
 
-    async def update_one(self, query: dict[str, Any], update_data: dict[str, Any], *, upsert: bool = False) -> bool:
-        result = await self.collection.update_one(query, {"$set": update_data}, upsert=upsert)
-        return result.modified_count > 0 or result.upserted_id is not None
+    async def update_one(
+        self, query: dict[str, Any], update_data: dict[str, Any], upsert: bool = False
+    ) -> UpdateResult:
+        return await self.collection.update_one(query, {"$set": update_data}, upsert=upsert)
 
-    async def update_many(self, query: dict[str, Any], update_data: dict[str, Any]) -> int:
-        result = await self.collection.update_many(query, {"$set": update_data})
-        return result.modified_count
+    async def update_many(self, query: dict[str, Any], update_data: dict[str, Any]) -> UpdateResult:
+        return await self.collection.update_many(query, {"$set": update_data})
 
     async def find_one_and_update(self, query: dict[str, Any], update_data: dict[str, Any]) -> T | None:
         data = await self.collection.find_one_and_update(
             query, {"$set": update_data}, return_document=ReturnDocument.AFTER
         )
-        return self.model.model_validate(data) if data else None
 
-    async def delete_one(self, query: dict[str, Any]) -> bool:
-        result = await self.collection.delete_one(query)
-        return result.deleted_count > 0
+        if not data:
+            return None
 
-    async def delete_many(self, query: dict[str, Any]) -> int:
-        result = await self.collection.delete_many(query)
-        return result.deleted_count
+        return self.model.model_validate_mongodb(data)
+
+    async def delete_one(self, query: dict[str, Any]) -> DeleteResult:
+        return await self.collection.delete_one(query)
+
+    async def delete_many(self, query: dict[str, Any]) -> DeleteResult:
+        return await self.collection.delete_many(query)
