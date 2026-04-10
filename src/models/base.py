@@ -9,12 +9,25 @@ T = TypeVar("T", bound="MongoModel")
 SortDirection = Literal[1, -1]
 
 
+class PyObjectId(ObjectId):
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source, handler):
+        from pydantic_core import core_schema
+
+        return core_schema.str_schema()
+
+    @classmethod
+    def __get_pydantic_json_schema__(cls, core_schema, handler):
+        return {"type": "string"}
+
+
 class MongoModel(BaseModel):
-    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
     model_config = {
         "populate_by_name": True,
         "arbitrary_types_allowed": True,
+        "json_encoders": {ObjectId: str},
     }
 
 
@@ -41,8 +54,7 @@ class BaseMongoManager(Generic[T]):
 
     async def list(
         self,
-        query: dict[str, Any],
-        *,
+        query: dict[str, Any] | None = None,
         skip: int = 0,
         limit: int = 100,
         sort: list[tuple[str, SortDirection]] | None = None,
