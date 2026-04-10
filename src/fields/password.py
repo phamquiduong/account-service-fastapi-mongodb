@@ -10,7 +10,7 @@ PASSWORD_REGEX = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).
 
 def _validate_password(v: str) -> str:
     if not PASSWORD_REGEX.match(v):
-        raise PydanticCustomError("Invalid", "invalid password")
+        raise PydanticCustomError("Invalid", "Invalid password")
     return v
 
 
@@ -22,10 +22,7 @@ PasswordStr = Annotated[
         min_length=8,
         max_length=64,
         examples=["P@ssw0rd123!"],
-        json_schema_extra={
-            "format": "password",
-            "writeOnly": True,
-        },
+        json_schema_extra={"format": "password", "writeOnly": True},
         exclude=True,
     ),
     AfterValidator(_validate_password),
