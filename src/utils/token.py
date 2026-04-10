@@ -1,4 +1,6 @@
-from typing import Any
+from json import JSONEncoder
+from typing import Any, override
+from uuid import UUID
 
 import jwt
 
@@ -6,9 +8,17 @@ import settings
 from schemas.token import TokenData
 
 
+class _Encoder(JSONEncoder):
+    @override
+    def default(self, o: Any) -> Any:
+        if isinstance(o, UUID):
+            return str(o)
+        return super().default(o)
+
+
 def _encode_jwt_token(data: dict, secret_key: str, algorithm: str):
     to_encode = data.copy()
-    encoded_jwt = jwt.encode(payload=to_encode, key=secret_key, algorithm=algorithm)
+    encoded_jwt = jwt.encode(payload=to_encode, key=secret_key, algorithm=algorithm, json_encoder=_Encoder)
     return encoded_jwt
 
 

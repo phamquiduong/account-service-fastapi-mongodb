@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
 from enum import StrEnum
+from uuid import UUID, uuid7
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 import settings
 from models.user import User
@@ -21,6 +22,8 @@ class TokenData(BaseModel):
     user_id: str
     token_type: TokenType
     exp: datetime
+    jti: UUID = Field(default_factory=uuid7)
+    iat: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     @classmethod
     def access(cls, user: User):
