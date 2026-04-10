@@ -4,9 +4,11 @@
 <br>
 
 ## Setup environment variable
-| Variable name | Description | Example |
-| ------------- | ----------- | ------- |
-| [Coming soon] | ..          | ..      |
+* Create **.env** file in root folder
+
+| Variable name | Description        | Example                                             |
+| ------------- | ------------------ | --------------------------------------------------- |
+| MONGODB_URI   | MongoDB connection | mongodb+srv://user:pass@cluster.mhaauzq.mongodb.net |
 
 <br>
 
