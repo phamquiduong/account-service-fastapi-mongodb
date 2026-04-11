@@ -7,6 +7,12 @@ from routers.user import user_router
 # Main application
 app = FastAPI()
 
+
+@app.get("/", include_in_schema=False)
+async def health_check():
+    return {"status": "ok"}
+
+
 # Include router
 app.include_router(auth_router)
 app.include_router(user_router)
