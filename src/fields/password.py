@@ -5,11 +5,11 @@ from pydantic import Field
 from pydantic.functional_validators import AfterValidator
 from pydantic_core import PydanticCustomError
 
-PASSWORD_REGEX = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,64}$")
+_PASSWORD_REGEX = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,64}$")
 
 
 def _validate_password(v: str) -> str:
-    if not PASSWORD_REGEX.match(v):
+    if not _PASSWORD_REGEX.match(v):
         raise PydanticCustomError("Invalid", "Invalid password")
     return v
 
