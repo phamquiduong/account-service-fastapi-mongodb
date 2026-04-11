@@ -2,7 +2,6 @@ import logging
 
 from fastapi import APIRouter, HTTPException, status
 
-from dependencies.auth import AuthUserDep
 from dependencies.user import UserMongoManagerDep
 from models.user import User
 from schemas.user import UserRegisterRequest
@@ -29,8 +28,3 @@ async def register_new_user(user_mongo_manager: UserMongoManagerDep, request: Us
     user = User(email=request.email, password=get_password_hash(request.password))
     await user_mongo_manager.create(user)
     return user
-
-
-@user_router.get("/me")
-async def get_current_user_info(auth_user: AuthUserDep) -> User:
-    return auth_user
