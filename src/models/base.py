@@ -70,6 +70,9 @@ class BaseMongoManager(Generic[T]):
     ) -> UpdateResult:
         return await self.collection.update_one(query, {"$set": update_data}, upsert=upsert)
 
+    async def update_by_id(self, id_value: Any, update_data: dict[str, Any]) -> UpdateResult:
+        return await self.update_one(query={"_id": ObjectId(id_value)}, update_data=update_data)
+
     async def update_many(self, query: dict[str, Any], update_data: dict[str, Any]) -> UpdateResult:
         return await self.collection.update_many(query, {"$set": update_data})
 
