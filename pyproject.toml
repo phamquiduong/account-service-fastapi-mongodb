@@ -3,6 +3,17 @@ name = "account-service-fastapi-mongodb"
 version = "0.1.0"
 requires-python = ">=3.14"
 
+# Runtime dependencies
+dependencies = [
+    "python-dotenv",
+    "fastapi[standard]",
+    "uvicorn",
+    "pydantic[email]",
+    "pymongo",
+    "pwdlib[argon2]",
+    "pyjwt",
+]
+
 [tool.ruff]
 line-length = 120
 target-version = "py314"
