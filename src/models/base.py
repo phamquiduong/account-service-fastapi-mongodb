@@ -43,6 +43,9 @@ class BaseMongoManager(Generic[T]):
         data = await self.collection.find_one(query)
         return self.model.model_validate_mongodb(data) if data else None
 
+    async def get_by_id(self, id_value: Any) -> T | None:
+        return await self.get({"_id": ObjectId(id_value)})
+
     async def list(
         self,
         query: dict[str, Any] | None = None,
