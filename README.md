@@ -17,16 +17,12 @@
 ## Run project with script
 * Windows:
     ```powershell
-    .\run.bat
-    ```
-* Linux
-    ```bash
-    # Coming soon
+    .\.script\run.bat
     ```
 
-* Docker
+* Docker (Windows)
     ```bash
-    # Coming soon
+    .\.script\docker.bat
     ```
 
 <br>
@@ -34,7 +30,7 @@
 ## Run project manual
 * Install Python packages
     ```bash
-    pip install -r requirements.txt
+    pip install .
     ```
 
 * Change directory to source code folder
@@ -44,5 +40,5 @@
 
 * Run server
     ```bash
-    uvicorn main:app --reload
+    uvicorn main:app --reload --host 0.0.0.0 --port 80
     ```

@@ -1,0 +1,40 @@
+services:
+  fastapi:
+    build:
+      context: ..
+      dockerfile: .docker/fastapi/Dockerfile
+    ports:
+      - ${FASTAPI_PORT}:8000
+    environment:
+      - DB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASS}@mongodb:27017
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_NAME=account-service-docker
+    volumes:
+      - ../src:/src
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - mongodb
+    restart: always
+
+  mongodb:
+    image: mongo:latest
+    expose:
+      - 27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
+    volumes:
+      - ./mongodb/data:/data/db
+    restart: always
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - ${MONGODB_EXPRESS_PORT}:8081
+    environment:
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      - ME_CONFIG_MONGODB_URL=mongodb://${MONGODB_USER}:${MONGODB_PASS}@mongodb:27017
+    depends_on:
+      - mongodb
+    restart: always
