@@ -1,0 +1,29 @@
+# --- Python Bytecode & Cache ---
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/*.so
+**/.pytest_cache/
+**/.ipynb_checkpoints/
+
+# --- Environment & Dependencies ---
+**/.venv/
+**/venv/
+**/env/
+**/virtualenv/
+
+# --- Build & Distribution ---
+**/build/
+**/dist/
+**/*.egg-info/
+**/*.egg
+
+# --- Docker & System ---
+**/.git
+**/.docker/
+**/.DS_Store
+**/Thumbs.db
+
+# --- Secrets ---
+**/.env
+**/.env.*
