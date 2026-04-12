@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 
 from dependencies.user import UserMongoManagerDep
 from models.user import User
+from schemas.list import ListQueryDep
 from schemas.user import UserRegisterRequest
 from utils.password import get_password_hash
 
@@ -13,8 +14,8 @@ user_router = APIRouter(prefix="/users", tags=["User"])
 
 
 @user_router.get("")
-async def get_all_users(user_mongo_manager: UserMongoManagerDep) -> list[User]:
-    return await user_mongo_manager.list()
+async def get_all_users(user_mongo_manager: UserMongoManagerDep, list_query: ListQueryDep) -> list[User]:
+    return await user_mongo_manager.list(skip=list_query.skip, limit=list_query.limit)
 
 
 @user_router.post("", status_code=status.HTTP_201_CREATED)
