@@ -10,7 +10,7 @@ auth_user_router = APIRouter(prefix="/users/me", tags=["Authenticated user"])
 
 
 @auth_user_router.get("")
-async def get_authenticated_user_info(auth_user: AuthUserDep) -> User:
+def get_authenticated_user_info(auth_user: AuthUserDep) -> User:
     return auth_user
 
 

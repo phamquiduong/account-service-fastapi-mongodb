@@ -9,7 +9,7 @@ app = FastAPI()
 
 
 @app.get("/", include_in_schema=False)
-async def health_check():
+def health_check():
     return {"status": "ok"}
 
 
