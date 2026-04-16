@@ -21,7 +21,7 @@ _credentials_exception = HTTPException(
 )
 
 
-async def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)]) -> TokenData:
+def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)]) -> TokenData:
     try:
         token_data = decode_auth_token(token)
     except InvalidTokenError as exc:

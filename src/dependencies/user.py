@@ -7,7 +7,7 @@ from models.base import BaseMongoManager
 from models.user import User
 
 
-async def _get_user_manager():
+def _get_user_manager():
     yield BaseMongoManager(uri=settings.DB_URI, db_name=settings.DB_NAME, collection_name="users", model=User)
 
 
