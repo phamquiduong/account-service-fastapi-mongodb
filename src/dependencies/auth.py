@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 
-from dependencies.user import UserMongoManagerDep
+from dependencies.services.user import UserServiceDep
 from models.user import User
 from schemas.token import TokenData, TokenType
 from utils.token import decode_auth_token
@@ -37,8 +37,8 @@ def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)]) -> TokenData
 TokenDataDep = Annotated[TokenData, Depends(_get_token_data)]
 
 
-async def _get_auth_user(user_mongo_manager: UserMongoManagerDep, token_data: TokenDataDep) -> User:
-    user = await user_mongo_manager.get_by_id(token_data.user_id)
+async def _get_auth_user(user_service: UserServiceDep, token_data: TokenDataDep) -> User:
+    user = await user_service.get_by_id(token_data.user_id)
 
     if user is None:
         _logger.warning("User with id [%s] does not exist", token_data.user_id)
