@@ -15,3 +15,8 @@ pwdlib[argon2]
 
 # JWT
 pyjwt
+
+# Testing
+pytest
+httpx
+mongomock-motor
