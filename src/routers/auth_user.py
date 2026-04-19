@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from dependencies.auth import AuthUserDep
-from dependencies.services.user import UserServiceDep
+from dependencies.user import UserServiceDep
 from models.user import User
 from schemas.user import AuthUserChangePasswordRequest
 from utils.password import verify_password

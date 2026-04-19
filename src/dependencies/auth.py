@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 
-from dependencies.services.user import UserServiceDep
+from dependencies.user import UserServiceDep
 from models.user import User
 from schemas.token import TokenData, TokenType
 from utils.token import decode_auth_token

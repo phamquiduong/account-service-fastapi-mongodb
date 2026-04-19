@@ -2,7 +2,7 @@ import logging
 
 from fastapi import APIRouter, HTTPException, status
 
-from dependencies.services.user import UserServiceDep
+from dependencies.user import UserServiceDep
 from models.user import User
 from schemas.list import ListQueryDep
 from schemas.user import UserRegisterRequest
