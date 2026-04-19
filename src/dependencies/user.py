@@ -12,10 +12,10 @@ def _get_user_repository():
     yield BaseMongoManager.from_uri(uri=settings.DB_URI, db_name=settings.DB_NAME, model=User)
 
 
-UserRepositoryDep = Annotated[BaseMongoManager[User], Depends(_get_user_repository)]
+_UserRepositoryDep = Annotated[BaseMongoManager[User], Depends(_get_user_repository)]
 
 
-def _get_user_service(user_repository: UserRepositoryDep):
+def _get_user_service(user_repository: _UserRepositoryDep):
     return UserService(user_repository)
 
 
