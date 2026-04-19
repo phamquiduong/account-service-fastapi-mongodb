@@ -21,7 +21,7 @@
     ```
 
 * Docker (Windows)
-    ```bash
+    ```powershell
     .\.script\docker.bat
     ```
 
@@ -42,3 +42,10 @@
     ```bash
     uvicorn main:app --reload --host 0.0.0.0 --port 80
     ```
+
+<br>
+
+## Run tests
+```bash
+pytest
+```
