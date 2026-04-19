@@ -30,7 +30,7 @@
 ## Run project manual
 * Install Python packages
     ```bash
-    pip install .
+    pip install -r requirements.txt
     ```
 
 * Change directory to source code folder

@@ -1,7 +1,7 @@
 @echo off
 
 REM Install dependencies from pyproject.toml
-pip install .
+pip install -r requirements.txt
 
 cd src
 

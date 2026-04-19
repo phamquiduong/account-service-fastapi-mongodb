@@ -5,10 +5,9 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml .
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir --only-binary=:all: . \
-    && rm -rf build dist *.egg-info
+RUN pip install --no-cache-dir --only-binary=:all: -r requirements.txt
 
 COPY src ./src
 
