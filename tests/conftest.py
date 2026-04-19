@@ -24,7 +24,7 @@ async def db_test(db_client):
 
 @pytest.fixture
 async def client(db_client):
-    from dependencies.repositories.user import _get_user_repository
+    from dependencies.user import _get_user_repository
     from main import app
     from models.base import BaseMongoManager
     from models.user import User

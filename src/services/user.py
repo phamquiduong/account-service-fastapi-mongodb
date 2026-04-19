@@ -2,7 +2,7 @@ import logging
 
 from pydantic import EmailStr
 
-from dependencies.repositories.user import UserRepositoryDep
+from models.base import BaseMongoManager
 from models.user import User
 from utils.password import get_password_hash, verify_password
 
@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class UserService:
-    def __init__(self, user_repository: UserRepositoryDep):
+    def __init__(self, user_repository: BaseMongoManager[User]):
         self.user_repository = user_repository
 
     async def get_by_id(self, user_id: str) -> User | None:
