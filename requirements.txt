@@ -18,5 +18,6 @@ pyjwt
 
 # Testing
 pytest
+pytest-asyncio
 httpx
 mongomock-motor
