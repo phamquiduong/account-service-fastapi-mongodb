@@ -1,8 +1,12 @@
+import logging
+
 from pydantic import EmailStr
 
 from dependencies.repositories.user import UserRepositoryDep
 from models.user import User
-from utils.password import get_password_hash
+from utils.password import get_password_hash, verify_password
+
+_logger = logging.getLogger(__name__)
 
 
 class UserService:
@@ -26,4 +30,17 @@ class UserService:
         hashed_password = get_password_hash(password)
         user = User(email=email, password=hashed_password)
         await self.user_repository.create(user)
+        return user
+
+    async def authenticate_user(self, email: EmailStr, password: str) -> User | None:
+        user = await self.get_by_email(email=email)
+
+        if user is None:
+            _logger.warning("user with email [%s] does not exist", email)
+            return None
+
+        if verify_password(plain_password=password, hashed_password=user.password) is False:
+            _logger.warning("user with email [%s] wrong password", email)
+            return None
+
         return user
