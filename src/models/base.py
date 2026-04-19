@@ -1,4 +1,4 @@
-from typing import Any, Generic, Literal, TypeVar
+from typing import Any, ClassVar, Generic, Literal, TypeVar
 
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -13,6 +13,8 @@ SortDirection = Literal[1, -1]
 class MongoModel(BaseModel):
     id: str = Field(default_factory=lambda: str(ObjectId()), examples=["69d8b4df68b4dc9557add552"])
 
+    __collection_name__: ClassVar[str]
+
     def model_dump_mongodb(self) -> dict[str, Any]:
         data = self.__dict__.copy()
         data["_id"] = ObjectId(data.pop("id"))
@@ -25,11 +27,16 @@ class MongoModel(BaseModel):
 
 
 class BaseMongoManager(Generic[T]):
-    def __init__(self, uri: str, db_name: str, collection_name: str, model: type[T]):
-        self.client = AsyncMongoClient(uri)
+    def __init__(self, client, db_name: str, model: type[T]):
+        self.client = client
         self.db = self.client[db_name]
-        self.collection: AsyncCollection = self.db[collection_name]
+        self.collection: AsyncCollection = self.db[model.__collection_name__]
         self.model = model
+
+    @classmethod
+    def from_uri(cls, uri: str, db_name: str, model: type[T]):
+        client = AsyncMongoClient(uri)
+        return cls(client, db_name, model)
 
     async def create(self, obj: T) -> InsertOneResult:
         data = obj.model_dump_mongodb()
