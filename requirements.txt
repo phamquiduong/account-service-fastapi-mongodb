@@ -1,0 +1,17 @@
+# Read environment
+python-dotenv
+
+# FastAPI
+fastapi
+uvicorn
+pydantic[email]
+python-multipart
+
+# MongoDB
+pymongo
+
+# Password Hashing
+pwdlib[argon2]
+
+# JWT
+pyjwt
