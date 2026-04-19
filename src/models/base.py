@@ -6,8 +6,8 @@ from pymongo import AsyncMongoClient, ReturnDocument
 from pymongo.asynchronous.collection import AsyncCollection
 from pymongo.results import DeleteResult, InsertManyResult, InsertOneResult, UpdateResult
 
-T = TypeVar("T", bound="MongoModel")
-SortDirection = Literal[1, -1]
+_T = TypeVar("_T", bound="MongoModel")
+_SortDirection = Literal[1, -1]
 
 
 class MongoModel(BaseModel):
@@ -26,31 +26,31 @@ class MongoModel(BaseModel):
         return cls.model_validate(data)
 
 
-class BaseMongoManager(Generic[T]):
-    def __init__(self, client, db_name: str, model: type[T]):
+class BaseMongoManager(Generic[_T]):
+    def __init__(self, client, db_name: str, model: type[_T]):
         self.client = client
         self.db = self.client[db_name]
         self.collection: AsyncCollection = self.db[model.__collection_name__]
         self.model = model
 
     @classmethod
-    def from_uri(cls, uri: str, db_name: str, model: type[T]):
+    def from_uri(cls, uri: str, db_name: str, model: type[_T]):
         client = AsyncMongoClient(uri)
         return cls(client, db_name, model)
 
-    async def create(self, obj: T) -> InsertOneResult:
+    async def create(self, obj: _T) -> InsertOneResult:
         data = obj.model_dump_mongodb()
         return await self.collection.insert_one(data)
 
-    async def insert_many(self, objs: list[T]) -> InsertManyResult:
+    async def insert_many(self, objs: list[_T]) -> InsertManyResult:
         data = [obj.model_dump_mongodb() for obj in objs]
         return await self.collection.insert_many(data)
 
-    async def get(self, query: dict[str, Any]) -> T | None:
+    async def get(self, query: dict[str, Any]) -> _T | None:
         data = await self.collection.find_one(query)
         return self.model.model_validate_mongodb(data) if data else None
 
-    async def get_by_id(self, id_value: Any) -> T | None:
+    async def get_by_id(self, id_value: Any) -> _T | None:
         return await self.get({"_id": ObjectId(id_value)})
 
     async def list(
@@ -58,8 +58,8 @@ class BaseMongoManager(Generic[T]):
         query: dict[str, Any] | None = None,
         skip: int = 0,
         limit: int = 100,
-        sort: list[tuple[str, SortDirection]] | None = None,
-    ) -> list[T]:
+        sort: list[tuple[str, _SortDirection]] | None = None,
+    ) -> list[_T]:
         cursor = self.collection.find(query or {})
 
         if sort:
@@ -83,7 +83,7 @@ class BaseMongoManager(Generic[T]):
     async def update_many(self, query: dict[str, Any], update_data: dict[str, Any]) -> UpdateResult:
         return await self.collection.update_many(query, {"$set": update_data})
 
-    async def find_one_and_update(self, query: dict[str, Any], update_data: dict[str, Any]) -> T | None:
+    async def find_one_and_update(self, query: dict[str, Any], update_data: dict[str, Any]) -> _T | None:
         data = await self.collection.find_one_and_update(
             query, {"$set": update_data}, return_document=ReturnDocument.AFTER
         )
