@@ -13,17 +13,24 @@ os.environ["DB_URI"] = "mongodb://test:test@localhost:27017"
 
 
 @pytest.fixture
-async def client():
-    import settings
+async def db_client():
+    return mongomock_motor.AsyncMongoMockClient()
+
+
+@pytest.fixture
+async def db_test(db_client):
+    return db_client[os.environ["DB_NAME"]]
+
+
+@pytest.fixture
+async def client(db_client):
     from dependencies.repositories.user import _get_user_repository
     from main import app
     from models.base import BaseMongoManager
     from models.user import User
 
-    client = mongomock_motor.AsyncMongoMockClient()
-
     async def override_get_user_repository():
-        yield BaseMongoManager(client, db_name=settings.DB_NAME, model=User)
+        yield BaseMongoManager(db_client, db_name=os.environ["DB_NAME"], model=User)
 
     app.dependency_overrides[_get_user_repository] = override_get_user_repository
 
