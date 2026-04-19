@@ -8,7 +8,7 @@ from models.user import User
 
 
 def _get_user_repository():
-    yield BaseMongoManager(uri=settings.DB_URI, db_name=settings.DB_NAME, collection_name="users", model=User)
+    yield BaseMongoManager.from_uri(uri=settings.DB_URI, db_name=settings.DB_NAME, model=User)
 
 
 UserRepositoryDep = Annotated[BaseMongoManager[User], Depends(_get_user_repository)]
