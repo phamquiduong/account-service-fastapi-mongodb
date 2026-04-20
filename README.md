@@ -10,7 +10,7 @@
 | ------------- | ------------------ | ----------------------------------------------------- |
 | DB_URI        | MongoDB connection | `mongodb+srv://user:pass@cluster.mhaauzq.mongodb.net` |
 | DB_NAME       | MongoDB DB name    | `account-service-testing`                             |
-| SECRET_KEY    | JWT secret key     | `BFx79ZpgtmWqkd9zzvjNXP72`                            |
+| SECRET_KEY    | JWT secret key     | `B50HiHr6w1JTR0P2zcWOcGthEGJOzqzxuym2S7FNhrE=`        |
 
 <br>
 
@@ -42,6 +42,8 @@
     ```bash
     uvicorn main:app --reload --host 0.0.0.0 --port 80
     ```
+
+* Visit API document at http://localhost/docs
 
 <br>
 
