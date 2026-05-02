@@ -20,8 +20,8 @@ async def login_for_access_token(
     user = await user_service.authenticate_user(email=form_data.username, password=form_data.password)
     if not user:
         raise _certificate_error
-
-    access_token_data = TokenData.access(user=user)
+    token_version = await user_service.get_token_version(user_id=user.id)
+    access_token_data = TokenData.access(user=user, token_version=token_version)
     return FastAPIToken(access_token=create_auth_token(access_token_data))
 
 
@@ -31,6 +31,7 @@ async def login_with_email_password(user_service: UserServiceDep, request: Login
     if not user:
         raise _certificate_error
 
-    access_token_data = TokenData.access(user=user)
-    refresh_token_data = TokenData.refresh(user=user)
+    token_version = await user_service.get_token_version(user_id=user.id)
+    access_token_data = TokenData.access(user=user, token_version=token_version)
+    refresh_token_data = TokenData.refresh(user=user, token_version=token_version)
     return TokenResponse(access=create_auth_token(access_token_data), refresh=create_auth_token(refresh_token_data))
