@@ -20,13 +20,13 @@ class UserService:
         self.user_repository = user_repository
         self.token_version_repository = token_version_repository
 
-    async def get_by_id(self, user_id: str) -> User | None:
+    async def get_by_id(self, user_id: uuid.UUID) -> User | None:
         return await self.user_repository.get_by_id(id_value=user_id)
 
     async def get_by_email(self, email: EmailStr) -> User | None:
         return await self.user_repository.get(query={"email": email})
 
-    async def update_password(self, user_id: str, new_password: str):
+    async def update_password(self, user_id: uuid.UUID, new_password: str):
         new_password_hashed = get_password_hash(new_password)
         await self.user_repository.update_by_id(user_id, {"password": new_password_hashed})
 
@@ -52,9 +52,15 @@ class UserService:
 
         return user
 
-    async def get_token_version(self, user_id: uuid.UUID) -> int:
+    async def get_token_version(self, user_id: uuid.UUID) -> TokenVersion:
         token_version = await self.token_version_repository.get(query={"user_id": user_id})
         if token_version is None:
             token_version = TokenVersion(user_id=user_id)
             await self.token_version_repository.create(token_version)
-        return token_version.version
+        return token_version
+
+    async def increment_token_version(self, user_id: uuid.UUID) -> TokenVersion:
+        token_version = await self.get_token_version(user_id=user_id)
+        token_version.version += 1
+        await self.token_version_repository.update_by_id(token_version.id, {"version": token_version.version})
+        return token_version
