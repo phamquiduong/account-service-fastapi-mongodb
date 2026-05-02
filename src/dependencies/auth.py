@@ -21,7 +21,7 @@ _credentials_exception = HTTPException(
 )
 
 
-def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)]) -> TokenData:
+async def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)], user_service: UserServiceDep) -> TokenData:
     try:
         token_data = decode_auth_token(token)
     except InvalidTokenError as exc:
@@ -29,6 +29,11 @@ def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)]) -> TokenData
 
     if token_data.token_type != TokenType.ACCESS:
         _logger.warning("Authenticate failed. Token type [%s] invalid", token_data.token_type)
+        raise _credentials_exception
+
+    token_version = await user_service.get_token_version(user_id=token_data.user_id)
+    if token_version != token_data.token_version:
+        _logger.warning("Authenticate failed. Token version [%s] invalid", token_data.token_version)
         raise _credentials_exception
 
     return token_data

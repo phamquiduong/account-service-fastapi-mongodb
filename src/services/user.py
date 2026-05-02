@@ -3,6 +3,7 @@ import logging
 from pydantic import EmailStr
 
 from models.base import BaseMongoManager
+from models.token_version import TokenVersion
 from models.user import User
 from utils.password import get_password_hash, verify_password
 
@@ -10,8 +11,13 @@ _logger = logging.getLogger(__name__)
 
 
 class UserService:
-    def __init__(self, user_repository: BaseMongoManager[User]):
+    def __init__(
+        self,
+        user_repository: BaseMongoManager[User],
+        token_version_repository: BaseMongoManager[TokenVersion],
+    ):
         self.user_repository = user_repository
+        self.token_version_repository = token_version_repository
 
     async def get_by_id(self, user_id: str) -> User | None:
         return await self.user_repository.get_by_id(id_value=user_id)
@@ -44,3 +50,10 @@ class UserService:
             return None
 
         return user
+
+    async def get_token_version(self, user_id: str) -> int:
+        token_version = await self.token_version_repository.get(query={"user_id": user_id})
+        if token_version is None:
+            token_version = TokenVersion(user_id=user_id)
+            await self.token_version_repository.create(token_version)
+        return token_version.version

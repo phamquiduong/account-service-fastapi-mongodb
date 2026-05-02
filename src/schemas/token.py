@@ -20,20 +20,31 @@ class TokenType(StrEnum):
 
 class TokenData(BaseModel):
     user_id: str
+    token_version: int
     token_type: TokenType
     exp: datetime
     jti: UUID = Field(default_factory=uuid7)
     iat: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     @classmethod
-    def access(cls, user: User):
+    def access(cls, user: User, token_version: int):
         now = datetime.now(timezone.utc)
-        return cls(user_id=user.id, token_type=TokenType.ACCESS, exp=now + settings.ACCESS_TOKEN_EXPIRE)
+        return cls(
+            user_id=user.id,
+            token_version=token_version,
+            token_type=TokenType.ACCESS,
+            exp=now + settings.ACCESS_TOKEN_EXPIRE,
+        )
 
     @classmethod
-    def refresh(cls, user: User):
+    def refresh(cls, user: User, token_version: int):
         now = datetime.now(timezone.utc)
-        return cls(user_id=user.id, token_type=TokenType.REFRESH, exp=now + settings.REFRESH_TOKEN_EXPIRE)
+        return cls(
+            user_id=user.id,
+            token_version=token_version,
+            token_type=TokenType.REFRESH,
+            exp=now + settings.REFRESH_TOKEN_EXPIRE,
+        )
 
 
 class TokenResponse(BaseModel):
