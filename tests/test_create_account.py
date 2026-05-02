@@ -13,7 +13,6 @@ _test_case = [
 ]
 
 
-@pytest.mark.anyio
 @pytest.mark.parametrize(*_test_case)
 async def test_create_user(client, db_test, email, password):
     res = await client.post(

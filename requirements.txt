@@ -20,4 +20,3 @@ pyjwt
 pytest
 pytest-asyncio
 httpx
-mongomock-motor

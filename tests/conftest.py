@@ -1,20 +1,23 @@
 import os
 import sys
 
-import mongomock_motor
 import pytest
 from httpx import ASGITransport, AsyncClient
+from pymongo import AsyncMongoClient
 
 sys.path.append(os.path.abspath("src"))
 
 os.environ["SECRET_KEY"] = "test_secret"
 os.environ["DB_NAME"] = "account-service-testing"
-os.environ["DB_URI"] = "mongodb://test:test@localhost:27017"
+os.environ["DB_URI"] = "mongodb://admin:IctJBI4rnILrbMFB@localhost:27017"
 
 
 @pytest.fixture
 async def db_client():
-    return mongomock_motor.AsyncMongoMockClient()
+    client = AsyncMongoClient(os.environ["DB_URI"], uuidRepresentation="standard")
+    yield client
+    await client.drop_database(os.environ["DB_NAME"])
+    await client.close()
 
 
 @pytest.fixture
