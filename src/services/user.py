@@ -3,8 +3,7 @@ import uuid
 
 from pydantic import EmailStr
 
-from models.base import BaseMongoManager
-from models.token_version import TokenVersion
+from models._base import BaseMongoManager
 from models.user import User
 from utils.password import get_password_hash, verify_password
 
@@ -12,13 +11,8 @@ _logger = logging.getLogger(__name__)
 
 
 class UserService:
-    def __init__(
-        self,
-        user_repository: BaseMongoManager[User],
-        token_version_repository: BaseMongoManager[TokenVersion],
-    ):
-        self.user_repository = user_repository
-        self.token_version_repository = token_version_repository
+    def __init__(self, user_mongo_manager: BaseMongoManager[User]):
+        self.user_repository = user_mongo_manager
 
     async def get_by_id(self, user_id: uuid.UUID) -> User | None:
         return await self.user_repository.get_by_id(id_value=user_id)
@@ -51,20 +45,3 @@ class UserService:
             return None
 
         return user
-
-    async def _get_token_version_from_db(self, user_id: uuid.UUID) -> TokenVersion:
-        token_version = await self.token_version_repository.get(query={"user_id": user_id})
-        if token_version is None:
-            token_version = TokenVersion(user_id=user_id)
-            await self.token_version_repository.create(token_version)
-        return token_version
-
-    async def get_token_version(self, user_id: uuid.UUID) -> uuid.UUID:
-        token_version = await self._get_token_version_from_db(user_id=user_id)
-        return token_version.version
-
-    async def update_token_version(self, user_id: uuid.UUID) -> TokenVersion:
-        token_version = await self._get_token_version_from_db(user_id=user_id)
-        token_version.version = uuid.uuid7()
-        await self.token_version_repository.update_by_id(token_version.id, {"version": token_version.version})
-        return token_version

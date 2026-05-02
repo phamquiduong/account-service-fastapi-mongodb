@@ -9,14 +9,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      MONGO_HOST: localhost
+      MONGO_PORT: 27017
+      MONGO_USER: test_user
+      MONGO_PASSWORD: test_password
+      DB_URI: mongodb://test_user:test_password@localhost:27017
+
     steps:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.1
         with:
           mongodb-version: '8.2.7'
-          mongodb-username: admin
-          mongodb-password: IctJBI4rnILrbMFB
-          mongodb-db: test
+          mongodb-username: ${{ env.MONGO_USER }}
+          mongodb-password: ${{ env.MONGO_PASSWORD }}
 
       - name: Checkout code
         uses: actions/checkout@v6

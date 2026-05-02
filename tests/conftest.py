@@ -1,5 +1,6 @@
 import os
 import sys
+import uuid
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -7,9 +8,9 @@ from pymongo import AsyncMongoClient
 
 sys.path.append(os.path.abspath("src"))
 
-os.environ["SECRET_KEY"] = "test_secret"
-os.environ["DB_NAME"] = "account-service-testing"
-os.environ["DB_URI"] = "mongodb://admin:IctJBI4rnILrbMFB@localhost:27017"
+os.environ.setdefault("SECRET_KEY", "test_secret")
+os.environ.setdefault("DB_NAME", f"test_{uuid.uuid4()}")
+os.environ.setdefault("DB_URI", "mongodb://admin:IctJBI4rnILrbMFB@localhost:27017")
 
 
 @pytest.fixture
@@ -27,20 +28,15 @@ async def db_test(db_client):
 
 @pytest.fixture
 async def client(db_client):
-    from dependencies.user import _get_user_repository
+    from dependencies.mongodb._client import get_mongo_client
     from main import app
-    from models.base import BaseMongoManager
-    from models.user import User
 
-    async def override_get_user_repository():
-        yield BaseMongoManager(db_client, db_name=os.environ["DB_NAME"], model=User)
+    async def override_get_mongo_client():
+        return db_client
 
-    app.dependency_overrides[_get_user_repository] = override_get_user_repository
+    app.dependency_overrides[get_mongo_client] = override_get_mongo_client
 
-    async with AsyncClient(
-        transport=ASGITransport(app=app),
-        base_url="http://test",
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
 
     app.dependency_overrides = {}
