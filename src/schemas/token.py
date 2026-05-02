@@ -52,14 +52,14 @@ class TokenResponse(BaseModel):
     access: str = Field(
         examples=[
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-            "eyJ1c2VyX2lkIjoiNjlkOGI0ZGY2OGI0ZGM5NTU3YWRkNTUyIiwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9."
-            "kZWhX7TzrYKBdpyNOKemFlATZAE-dBW54zrrjQdB6YQ"
+            "eyJ0b2tlbl90eXBlIjoiYWNjZXNzIn0."
+            "aNdCny8GHuapLKUUsigSUh5m8hc84sbOH5IsnA2h8w4"
         ]
     )
     refresh: str = Field(
         examples=[
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-            "eyJ1c2VyX2lkIjoiNjlkOGI0ZGY2OGI0ZGM5NTU3YWRkNTUyIiwidG9rZW5fdHlwZSI6InJlZnJlc2gifQ."
-            "jeoVYVioo538apWKyGl0UlE6lOrQugKTNusQlOLt_OU"
+            "eyJ0b2tlbl90eXBlIjoicmVmcmVzaCJ9."
+            "kxE_j_9e0YgSIQ5Gh-UqR8_4N4vuFtLjKtvbs1st4k4"
         ]
     )

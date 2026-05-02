@@ -2,7 +2,7 @@ import uuid
 from typing import Any, ClassVar, Generic, Literal, TypeVar
 
 from pydantic import BaseModel, Field
-from pymongo import ReturnDocument
+from pymongo import AsyncMongoClient, ReturnDocument
 from pymongo.asynchronous.collection import AsyncCollection
 from pymongo.results import DeleteResult, InsertManyResult, InsertOneResult, UpdateResult
 
@@ -27,7 +27,7 @@ class MongoModel(BaseModel):
 
 
 class BaseMongoManager(Generic[_T]):
-    def __init__(self, client, db_name: str, model: type[_T]):
+    def __init__(self, client: AsyncMongoClient, db_name: str, model: type[_T]) -> None:
         self.client = client
         self.db = self.client[db_name]
         self.collection: AsyncCollection = self.db[model.__collection_name__]

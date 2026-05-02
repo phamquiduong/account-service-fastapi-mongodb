@@ -1,5 +1,8 @@
 import pytest
 from fastapi import status
+from httpx import AsyncClient
+from pydantic import EmailStr
+from pymongo.asynchronous.database import AsyncDatabase
 
 from models.user import User
 from utils.password import verify_password
@@ -14,7 +17,7 @@ _test_case = [
 
 
 @pytest.mark.parametrize(*_test_case)
-async def test_create_user(client, db_test, email, password):
+async def test_create_user(client: AsyncClient, db_test: AsyncDatabase, email: EmailStr, password: str) -> None:
     res = await client.post(
         "/users",
         json={

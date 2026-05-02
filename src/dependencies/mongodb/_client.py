@@ -6,8 +6,8 @@ from pymongo import AsyncMongoClient
 import settings
 
 
-def get_mongo_client():
+def _get_mongo_client() -> AsyncMongoClient:
     return AsyncMongoClient(settings.DB_URI, uuidRepresentation="standard")
 
 
-MongoClientDep = Annotated[AsyncMongoClient, Depends(get_mongo_client)]
+MongoClientDep = Annotated[AsyncMongoClient, Depends(_get_mongo_client)]
