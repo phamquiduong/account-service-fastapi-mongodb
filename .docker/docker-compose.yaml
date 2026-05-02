@@ -18,8 +18,8 @@ services:
 
   mongodb:
     image: mongo:latest
-    expose:
-      - 27017
+    ports:
+      - ${MONGODB_PORT}:27017
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}

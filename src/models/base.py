@@ -1,6 +1,6 @@
+import uuid
 from typing import Any, ClassVar, Generic, Literal, TypeVar
 
-from bson import ObjectId
 from pydantic import BaseModel, Field
 from pymongo import AsyncMongoClient, ReturnDocument
 from pymongo.asynchronous.collection import AsyncCollection
@@ -11,18 +11,18 @@ _SortDirection = Literal[1, -1]
 
 
 class MongoModel(BaseModel):
-    id: str = Field(default_factory=lambda: str(ObjectId()), examples=["69d8b4df68b4dc9557add552"])
+    id: uuid.UUID = Field(default_factory=uuid.uuid7, examples=["019de957-3ff8-7734-996b-b4c50d5109cd"])
 
     __collection_name__: ClassVar[str]
 
     def model_dump_mongodb(self) -> dict[str, Any]:
         data = self.__dict__.copy()
-        data["_id"] = ObjectId(data.pop("id"))
+        data["_id"] = data.pop("id")
         return data
 
     @classmethod
     def model_validate_mongodb(cls, data: dict[str, Any]):
-        data["id"] = str(data.pop("_id"))
+        data["id"] = data.pop("_id")
         return cls.model_validate(data)
 
 
@@ -35,7 +35,7 @@ class BaseMongoManager(Generic[_T]):
 
     @classmethod
     def from_uri(cls, uri: str, db_name: str, model: type[_T]):
-        client = AsyncMongoClient(uri)
+        client = AsyncMongoClient(uri, uuidRepresentation="standard")
         return cls(client, db_name, model)
 
     async def create(self, obj: _T) -> InsertOneResult:
@@ -51,7 +51,7 @@ class BaseMongoManager(Generic[_T]):
         return self.model.model_validate_mongodb(data) if data else None
 
     async def get_by_id(self, id_value: Any) -> _T | None:
-        return await self.get({"_id": ObjectId(id_value)})
+        return await self.get({"_id": id_value})
 
     async def list(
         self,
@@ -78,7 +78,7 @@ class BaseMongoManager(Generic[_T]):
         return await self.collection.update_one(query, {"$set": update_data}, upsert=upsert)
 
     async def update_by_id(self, id_value: Any, update_data: dict[str, Any]) -> UpdateResult:
-        return await self.update_one(query={"_id": ObjectId(id_value)}, update_data=update_data)
+        return await self.update_one(query={"_id": id_value}, update_data=update_data)
 
     async def update_many(self, query: dict[str, Any], update_data: dict[str, Any]) -> UpdateResult:
         return await self.collection.update_many(query, {"$set": update_data})

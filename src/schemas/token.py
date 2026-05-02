@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timezone
 from enum import StrEnum
 from uuid import UUID, uuid7
@@ -19,7 +20,7 @@ class TokenType(StrEnum):
 
 
 class TokenData(BaseModel):
-    user_id: str
+    user_id: uuid.UUID
     token_version: int
     token_type: TokenType
     exp: datetime

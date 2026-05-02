@@ -8,7 +8,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.1
+        with:
+          mongodb-version: '8.2.7'
+          mongodb-username: admin
+          mongodb-password: IctJBI4rnILrbMFB
+          mongodb-db: test
+
       - name: Checkout code
         uses: actions/checkout@v6
 

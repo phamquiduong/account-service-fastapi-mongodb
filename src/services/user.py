@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 from pydantic import EmailStr
 
@@ -51,7 +52,7 @@ class UserService:
 
         return user
 
-    async def get_token_version(self, user_id: str) -> int:
+    async def get_token_version(self, user_id: uuid.UUID) -> int:
         token_version = await self.token_version_repository.get(query={"user_id": user_id})
         if token_version is None:
             token_version = TokenVersion(user_id=user_id)
