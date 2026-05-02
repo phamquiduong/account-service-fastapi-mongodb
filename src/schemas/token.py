@@ -21,14 +21,14 @@ class TokenType(StrEnum):
 
 class TokenData(BaseModel):
     user_id: uuid.UUID
-    token_version: int
+    token_version: uuid.UUID
     token_type: TokenType
     exp: datetime
     jti: UUID = Field(default_factory=uuid7)
     iat: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     @classmethod
-    def access(cls, user: User, token_version: int):
+    def access(cls, user: User, token_version: uuid.UUID):
         now = datetime.now(timezone.utc)
         return cls(
             user_id=user.id,
@@ -38,7 +38,7 @@ class TokenData(BaseModel):
         )
 
     @classmethod
-    def refresh(cls, user: User, token_version: int):
+    def refresh(cls, user: User, token_version: uuid.UUID):
         now = datetime.now(timezone.utc)
         return cls(
             user_id=user.id,
