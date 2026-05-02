@@ -32,7 +32,7 @@ async def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)], user_s
         raise _credentials_exception
 
     token_version = await user_service.get_token_version(user_id=token_data.user_id)
-    if token_version.version != token_data.token_version:
+    if token_version != token_data.token_version:
         _logger.warning("Authenticate failed. Token version [%s] invalid", token_data.token_version)
         raise _credentials_exception
 

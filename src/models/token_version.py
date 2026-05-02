@@ -9,4 +9,4 @@ class TokenVersion(MongoModel):
     __collection_name__ = "token_versions"
 
     user_id: uuid.UUID
-    version: int = Field(default=1)
+    version: uuid.UUID = Field(default_factory=uuid.uuid7)

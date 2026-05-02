@@ -22,4 +22,4 @@ async def change_authenticated_user_password(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect")
 
     await user_service.update_password(user_id=auth_user.id, new_password=request.new_password)
-    await user_service.increment_token_version(user_id=auth_user.id)
+    await user_service.update_token_version(user_id=auth_user.id)
