@@ -8,8 +8,8 @@ from models._base import BaseMongoManager
 from models.token_version import TokenVersion
 
 
-def _get_token_version_mongo_manager(client: MongoClientDep):
-    yield BaseMongoManager(client=client, db_name=settings.DB_NAME, model=TokenVersion)
+def _get_token_version_mongo_manager(client: MongoClientDep) -> BaseMongoManager[TokenVersion]:
+    return BaseMongoManager(client=client, db_name=settings.DB_NAME, model=TokenVersion)
 
 
 TokenVersionMongoManagerDep = Annotated[BaseMongoManager[TokenVersion], Depends(_get_token_version_mongo_manager)]

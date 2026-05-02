@@ -16,7 +16,7 @@ class _Encoder(JSONEncoder):
         return super().default(o)
 
 
-def _encode_jwt_token(data: dict, secret_key: str, algorithm: str):
+def _encode_jwt_token(data: dict, secret_key: str, algorithm: str) -> str:
     to_encode = data.copy()
     encoded_jwt = jwt.encode(payload=to_encode, key=secret_key, algorithm=algorithm, json_encoder=_Encoder)
     return encoded_jwt
@@ -26,7 +26,7 @@ def _decode_jwt(token: str, secret_key: str, algorithm: str) -> dict[str, Any]:
     return jwt.decode(jwt=token, key=secret_key, algorithms=[algorithm])
 
 
-def create_auth_token(token_data: TokenData):
+def create_auth_token(token_data: TokenData) -> str:
     return _encode_jwt_token(data=token_data.model_dump(), secret_key=settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
