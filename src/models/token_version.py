@@ -2,7 +2,7 @@ import uuid
 
 from pydantic import Field
 
-from models.base import MongoModel
+from models._base import MongoModel
 
 
 class TokenVersion(MongoModel):

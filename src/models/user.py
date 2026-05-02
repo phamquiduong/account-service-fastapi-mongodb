@@ -1,6 +1,6 @@
 from pydantic import EmailStr, Field
 
-from models.base import MongoModel
+from models._base import MongoModel
 
 
 class User(MongoModel):

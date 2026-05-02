@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 
+from dependencies.token_version import TokenVersionServiceDep
 from dependencies.user import UserServiceDep
 from models.user import User
 from schemas.token import TokenData, TokenType
@@ -21,7 +22,9 @@ _credentials_exception = HTTPException(
 )
 
 
-async def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)], user_service: UserServiceDep) -> TokenData:
+async def _get_token_data(
+    token: Annotated[str, Depends(_oauth2_scheme)], token_version_service: TokenVersionServiceDep
+) -> TokenData:
     try:
         token_data = decode_auth_token(token)
     except InvalidTokenError as exc:
@@ -31,7 +34,7 @@ async def _get_token_data(token: Annotated[str, Depends(_oauth2_scheme)], user_s
         _logger.warning("Authenticate failed. Token type [%s] invalid", token_data.token_type)
         raise _credentials_exception
 
-    token_version = await user_service.get_token_version(user_id=token_data.user_id)
+    token_version = await token_version_service.get_token_version(user_id=token_data.user_id)
     if token_version != token_data.token_version:
         _logger.warning("Authenticate failed. Token version [%s] invalid", token_data.token_version)
         raise _credentials_exception
