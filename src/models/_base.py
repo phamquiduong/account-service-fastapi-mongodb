@@ -4,6 +4,7 @@ from typing import Any, ClassVar, Generic, Literal, TypeVar
 from pydantic import BaseModel, Field
 from pymongo import AsyncMongoClient, ReturnDocument
 from pymongo.asynchronous.collection import AsyncCollection
+from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.results import DeleteResult, InsertManyResult, InsertOneResult, UpdateResult
 
 _T = TypeVar("_T", bound="MongoModel")
@@ -27,11 +28,20 @@ class MongoModel(BaseModel):
 
 
 class BaseMongoManager(Generic[_T]):
-    def __init__(self, client: AsyncMongoClient, db_name: str, model: type[_T]) -> None:
-        self.client = client
-        self.db = self.client[db_name]
+    def __init__(self, db: AsyncDatabase, model: type[_T]) -> None:
+        self.db = db
         self.collection: AsyncCollection = self.db[model.__collection_name__]
         self.model = model
+
+    @classmethod
+    def from_client(cls, client: AsyncMongoClient, db_name: str, model: type[_T]):
+        db = client[db_name]
+        return cls(db=db, model=model)
+
+    @classmethod
+    def from_url(cls, url: str, db_name: str, model: type[_T]):
+        client = AsyncMongoClient(url, uuidRepresentation="standard")
+        return cls.from_client(client=client, db_name=db_name, model=model)
 
     async def create(self, obj: _T) -> InsertOneResult:
         data = obj.model_dump_mongodb()
