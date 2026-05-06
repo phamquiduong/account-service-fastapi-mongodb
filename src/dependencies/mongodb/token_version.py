@@ -2,14 +2,13 @@ from typing import Annotated
 
 from fastapi import Depends
 
-import settings
-from dependencies.mongodb._client import MongoClientDep
+from dependencies.mongodb._connection import MongoDatabaseDep
 from models._base import BaseMongoManager
 from models.token_version import TokenVersion
 
 
-def _get_token_version_mongo_manager(client: MongoClientDep) -> BaseMongoManager[TokenVersion]:
-    return BaseMongoManager(client=client, db_name=settings.DB_NAME, model=TokenVersion)
+def _get_token_version_mongo_manager(db: MongoDatabaseDep) -> BaseMongoManager[TokenVersion]:
+    return BaseMongoManager(db=db, model=TokenVersion)
 
 
 TokenVersionMongoManagerDep = Annotated[BaseMongoManager[TokenVersion], Depends(_get_token_version_mongo_manager)]

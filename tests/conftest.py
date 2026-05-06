@@ -29,14 +29,14 @@ async def db_test(db_client: AsyncMongoClient) -> AsyncDatabase:
 
 
 @pytest.fixture
-async def client(db_client: AsyncMongoClient) -> AsyncGenerator[AsyncClient]:
-    from dependencies.mongodb._client import _get_mongo_client
+async def client(db_test: AsyncDatabase) -> AsyncGenerator[AsyncClient]:
+    from dependencies.mongodb._connection import _get_mongo_database
     from main import app
 
-    async def override_get_mongo_client():
-        return db_client
+    async def override_get_mongo_database():
+        return db_test
 
-    app.dependency_overrides[_get_mongo_client] = override_get_mongo_client
+    app.dependency_overrides[_get_mongo_database] = override_get_mongo_database
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
