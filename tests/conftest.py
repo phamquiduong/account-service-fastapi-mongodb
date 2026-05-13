@@ -10,7 +10,7 @@ from pymongo.asynchronous.database import AsyncDatabase
 
 sys.path.append(os.path.abspath("src"))
 
-os.environ.setdefault("SECRET_KEY", "test_secret")
+os.environ.setdefault("SECRET_KEY", "B50HiHr6w1JTR0P2zcWOcGthEGJOzqzxuym2S7FNhrE=")
 os.environ.setdefault("DB_NAME", f"test_{uuid.uuid4()}")
 os.environ.setdefault("DB_URI", "mongodb://admin:IctJBI4rnILrbMFB@localhost:27017")
 
