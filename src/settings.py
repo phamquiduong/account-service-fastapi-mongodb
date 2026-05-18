@@ -26,3 +26,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE = timedelta(minutes=30)
 REFRESH_TOKEN_EXPIRE = timedelta(days=60)
+
+# CORS
+_origins = os.getenv("ORIGIN", "*").split(";")
+ORIGINS = [o.strip() for o in _origins]
