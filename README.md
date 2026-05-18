@@ -6,11 +6,13 @@
 ## Setup environment variable
 * Create **.env** file in **root folder**
 
-| Variable name | Description        | Example                                               |
-| ------------- | ------------------ | ----------------------------------------------------- |
-| DB_URI        | MongoDB connection | `mongodb+srv://user:pass@cluster.mhaauzq.mongodb.net` |
-| DB_NAME       | MongoDB DB name    | `account-service-testing`                             |
-| SECRET_KEY    | JWT secret key     | `B50HiHr6w1JTR0P2zcWOcGthEGJOzqzxuym2S7FNhrE=`        |
+| Variable name | Description                   | Example                                               |
+| ------------- | ----------------------------- | ----------------------------------------------------- |
+| DB_URI        | MongoDB connection            | `mongodb+srv://user:pass@cluster.mhaauzq.mongodb.net` |
+| DB_NAME       | MongoDB DB name               | `account-service-testing`                             |
+| SECRET_KEY    | JWT secret key                | `B50HiHr6w1JTR0P2zcWOcGthEGJOzqzxuym2S7FNhrE=`        |
+| ORIGINS       | Cross-Origin Resource Sharing | `http://localhost:3000 ; http://127.0.0.1:3000`       |
+
 
 <br>
 
